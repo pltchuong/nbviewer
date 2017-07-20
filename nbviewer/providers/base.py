@@ -292,7 +292,7 @@ class BaseHandler(web.RequestHandler):
 
     def client_error_message(self, exc, url, body, msg=None):
         """Turn the tornado HTTP error into something useful
-        
+
         Returns error code
         """
         str_exc = str(exc)
@@ -304,10 +304,10 @@ class BaseHandler(web.RequestHandler):
         if (msg is None) and body and len(body) < 100:
             # if it's a short plain-text error message, include it
             msg = "%s (%s)" % (str_exc, escape(body))
-        
+
         if not msg:
             msg = str_exc
-        
+
         # Now get the error code
         if exc.code == 599:
             if isinstance(exc, CurlError):
@@ -328,7 +328,7 @@ class BaseHandler(web.RequestHandler):
                 msg = "Remote %s" % msg
             else:
                 code = 400
-        
+
         return code, msg
 
     def reraise_client_error(self, exc):
@@ -509,7 +509,7 @@ def cached(method):
             # call the wrapped method
             yield method(self, *args, **kwargs)
             return
-        
+
         pending_future = self.pending.get(uri, None)
         loop = IOLoop.current()
         if pending_future:
@@ -674,6 +674,13 @@ class RenderingHandler(BaseHandler):
 
         # Index notebook
         self.index.index_notebook(download_url, nb, public)
+
+    @gen.coroutine
+    def finish_pdf(self, url, format=None):
+        html_time = self.statsd.timer('rendering.html.time').start()
+        html = self.render_template("formats/%s.html" % format, url=url)
+        html_time.stop()
+        yield self.cache_and_finish(html)
 
 
 class FilesRedirectHandler(BaseHandler):
