@@ -46,11 +46,6 @@ def default_formats():
             'label': 'Slides',
             'icon': 'gift',
             'test': lambda nb, json: 'celltoolbar' in nb.metadata and nb.metadata['celltoolbar'] == 'Slideshow',
-        },
-        'script': {
-            'label': 'Code',
-            'icon': 'code',
-            'content_type': 'text/plain; charset=UTF-8'
         }
     }
 
