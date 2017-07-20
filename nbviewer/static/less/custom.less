@@ -1,0 +1,28 @@
+@jupyter-brand: #e20074;
+
+@navbar-height: 40px;
+@navbar-padding-vertical: 10px;
+
+@navbar-default-brand-color: #fff;
+@navbar-default-link-color: #fff;
+@navbar-default-link-hover-bg: #000;
+
+.navbar-fixed-top {
+  border-bottom-width: 0;
+
+  &.navbar {
+    background: @jupyter-brand;
+
+    .navbar-brand {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      height: auto;
+    }
+
+    .nav > li > a {
+      &:focus, &:hover, &.active {
+        color: @navbar-default-brand-color;
+      }
+    }
+  }
+}
