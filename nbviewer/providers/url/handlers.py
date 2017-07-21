@@ -70,26 +70,20 @@ class URLHandler(RenderingHandler):
         except Exception as e:
             app_log.error(e)
 
-        if url.endswith('.ipynb') or url.endswith('.ipynb?raw'):
-            response = yield self.fetch(remote_url)
 
-            try:
-                nbjson = response_text(response, encoding='utf-8')
-            except UnicodeDecodeError:
-                app_log.error("Notebook is not utf8: %s", remote_url, exc_info=True)
-                raise web.HTTPError(400)
+        response = yield self.fetch(remote_url)
 
-            yield self.finish_notebook(nbjson, download_url=remote_url,
-                                       msg="file from url: %s" % remote_url,
-                                       public=public,
-                                       request=self.request,
-                                       format=self.format)
-
-        elif url.endswith('.pdf') or url.endswith('.pdf?raw'):
-            yield self.finish_pdf(remote_url, format='pdf')
-
-        else:
+        try:
+            nbjson = response_text(response, encoding='utf-8')
+        except UnicodeDecodeError:
+            app_log.error("Notebook is not utf8: %s", remote_url, exc_info=True)
             raise web.HTTPError(400)
+
+        yield self.finish_notebook(nbjson, download_url=remote_url,
+                                   msg="file from url: %s" % remote_url,
+                                   public=public,
+                                   request=self.request,
+                                   format=self.format)
 
 
 def default_handlers(handlers=[]):
