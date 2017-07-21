@@ -7,7 +7,7 @@
 from tornado import web
 from tornado.log import app_log
 
-from .utils import transform_ipynb_uri, url_path_join
+from .utils import transform_ipynb_uri, url_path_join, response_text
 
 from .providers import (
     provider_handlers,
@@ -15,7 +15,12 @@ from .providers import (
 )
 from .providers.base import (
     BaseHandler,
+    RenderingHandler,
     format_prefix,
+    cached,
+)
+from tornado import (
+    gen,
 )
 from .providers.local import LocalFileHandler
 
@@ -30,14 +35,20 @@ class Custom404(BaseHandler):
         raise web.HTTPError(404)
 
 
-class IndexHandler(BaseHandler):
+class IndexHandler(RenderingHandler):
     """Render the index"""
+    @cached
+    @gen.coroutine
     def get(self):
-        self.finish(self.render_template(
-            'index.html',
-            sections=self.frontpage_sections,
-            no_frontpage_input=self.no_frontpage_input))
-
+        remote_url = 'https://solutions.eng.t-mobile.com/stash/projects/QTM/repos/predictive-analytics-projects/browse/index.ipynb?raw'
+        response = yield self.fetch(remote_url)
+        nbjson = response_text(response, encoding='utf-8')
+        yield self.finish_notebook(nbjson, download_url=remote_url,
+                                   msg="file from url: %s" % remote_url,
+                                   public=True,
+                                   title="Frontpage",
+                                   request=self.request,
+                                   format=self.format)
 
 class FAQHandler(BaseHandler):
     """Render the markdown FAQ page"""
