@@ -18,7 +18,10 @@
     {{ layout.head_icon(provider_url, "View on " + provider_label, provider_icon) }}
   {% endif %}
 
-  {{ layout.head_icon(download_url, "Download Notebook", "download", True) }}
+  {% if not 'celltoolbar' in nb.metadata and nb.metadata['celltoolbar'] == 'Index' %}
+    {{ layout.head_icon(download_url, "Download Notebook", "download", True) }}
+  {% endif %}
+
 {% endblock %}
 
 

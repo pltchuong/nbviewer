@@ -1,6 +1,7 @@
 @jupyter-brand: #e20074;
 
 @navbar-height: 40px;
+@navbar-padding-horizontal: 5px;
 @navbar-padding-vertical: 10px;
 
 @navbar-default-brand-color: #fff;
@@ -27,9 +28,10 @@
   }
 }
 
-#notebook[rel="Frontpage"] {
+#notebook {
 
-  .input_prompt {
+  &[rel="None"] .cell:first-child .input_prompt,
+  &[rel="Frontpage"] .input_prompt, {
     display: none;
   }
 
