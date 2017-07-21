@@ -49,14 +49,6 @@ class URLHandler(RenderingHandler):
 
         if query:
             remote_url = remote_url + '?' + query
-        if not url.endswith('.ipynb'):
-            # this is how we handle relative links (files/ URLs) in notebooks
-            # if it's not a .ipynb URL and it is a link from a notebook,
-            # redirect to the original URL rather than trying to render it as a notebook
-            refer_url = self.request.headers.get('Referer', '').split('://')[-1]
-            if refer_url.startswith(self.request.host + '/url'):
-                self.redirect(remote_url)
-                return
 
         parse_result = urlparse(remote_url)
 
