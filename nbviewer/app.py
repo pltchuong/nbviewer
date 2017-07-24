@@ -204,7 +204,7 @@ def make_app():
 
     # prefer the jhub defined service prefix over the CLI
     base_url = os.getenv('JUPYTERHUB_SERVICE_PREFIX', options.base_url)
-
+    
     rate_limiter = RateLimiter(
         limit=options.rate_limit,
         interval=options.rate_limit_interval,
@@ -267,7 +267,7 @@ def init_options():
         url = urlparse(os.environ['JUPYTERHUB_SERVICE_URL'])
         default_host, default_port = url.hostname, url.port
     else:
-        default_host, default_port = '0.0.0.0', 8080
+        default_host, default_port = '0.0.0.0', 5000
 
     define("debug", default=False, help="run in debug mode", type=bool)
     define("no_cache", default=False, help="Do not cache results", type=bool)
@@ -303,7 +303,7 @@ def init_options():
 def main(argv=None):
     init_options()
     tornado.options.parse_command_line(argv)
-
+    
     try:
         from tornado.curl_httpclient import curl_log
     except ImportError as e:
@@ -312,7 +312,7 @@ def main(argv=None):
         # debug-level curl_log logs all headers, info for upstream requests,
         # which is just too much.
         curl_log.setLevel(max(log.app_log.getEffectiveLevel(), logging.INFO))
-
+    
 
     # create and start the app
     app = make_app()
